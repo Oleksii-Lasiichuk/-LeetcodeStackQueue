@@ -1,91 +1,67 @@
-from arrays import Array, ArrayExpanded
-from abstractstack import AbstractStack
-class ArrayStack(AbstractStack):
-    """An array-based stack implementation."""
+class Stack:
 
-    # Class variable
-    DEFAULT_CAPACITY = 10
+    def __init__(self):
+        self.head = None
 
-    # Constructor
-    def __init__(self, sourceCollection = None):
-        """Sets the initial state of self, which includes the
-        contents of sourceCollection, if it's present."""
-        #self._items = Array(ArrayStack.DEFAULT_CAPACITY)
-        self._items = ArrayExpanded(ArrayStack.DEFAULT_CAPACITY)
-        AbstractStack.__init__(self, sourceCollection)
-
-    # Accessor methods
-    def __iter__(self):
-        """Supports iteration over a view of self.
-        Visits items from bottom to top of stack."""
-        cursor = 0
-        while cursor < len(self):
-            yield self._items[cursor]
-            cursor += 1
-
-    def peek(self):
-        """Returns the item at the top of the stack.
-        Precondition: the stack is not empty.
-        Raises: KeyError if stack is empty."""
-        if self.isEmpty():
-            raise KeyError("The stack is empty")
-        return self._items[len(self) - 1]
-
-    # Mutator methods
-    def clear(self):
-        """Makes self become empty."""
-        self._size = 0
-        self._items = Array(ArrayStack.DEFAULT_CAPACITY)
+    def is_empty(self):
+        return self.head is None
 
     def push(self, item):
-        """Inserts item at top of the stack."""
-        # Resize array here if necessary
-        print(type(self), self._size)
-        if len(self) == len(self._items):
-            print("grow")
-            self._items.grow()
-            #temp = Array(2 * len(self))
-            #for i in range(len(self)):
-            #    temp[i] = self._items[i]
-            #self._items = temp
-        self._items[len(self)] = item
-        self._size += 1
+        self.head = Node(item, self.head)
 
     def pop(self):
-        """Removes and returns the item at the top of the stack.
-        Precondition: the stack is not empty.
-        Raises: KeyError if stack is empty.
-        Postcondition: the top item is removed from the stack."""
-        if self.isEmpty():
-            raise KeyError("The stack is empty")
-        oldItem = self._items[len(self) - 1]
-        self._size -= 1
-        # Resize the array here if necessary
-        if len(self) <= len(self._items) // 4 and \
-           len(self._items) >= 2 * ArrayStack.DEFAULT_CAPACITY:
-            print("shrink")
-            #temp = Array(len(self._items) // 2)
-            #for i in range(len(self)):
-            #    temp [i] = self._items[i]
-            #self._items = temp
-            self._items.shrink()
-        return oldItem
-        
+        if self.is_empty():
+            raise ValueError('Stack is empty')
+        item = self.head.item
+        self.head = self.head.next
+        return item
+
+    @property
+    def peek(self):
+        if self.is_empty():
+            raise ValueError('Stack is empty')
+        else:
+            return self.head.item
+
+    def __len__(self):
+        count = 0
+        current = self.head
+        while current is not None:
+            count +=1
+            current = current.next
+        return count
+
+    def __str__(self):
+        s = ''
+        current = self.head
+        while current is not None:
+            s = str(current.item) + ' ' +s
+            current = current.next
+        return 'bottom -> '+ s+'<- top'
+
 class MyQueue:
 
     def __init__(self):
-        
+        self.stack1 = []  # For pushing elements
+        self.stack2 = []  # For popping/peeking elements
 
     def push(self, x: int) -> None:
-        
+        self.stack1.append(x)
 
     def pop(self) -> int:
-        
+        if not self.stack2:
+            while self.stack1:
+                self.stack2.append(self.stack1.pop())
+        return self.stack2.pop()
 
     def peek(self) -> int:
-        
+        if not self.stack2:
+            while self.stack1:
+                self.stack2.append(self.stack1.pop())
+        return self.stack2[-1]
 
     def empty(self) -> bool:
+        return not self.stack1 and not self.stack2
         
 
 
